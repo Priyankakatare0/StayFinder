@@ -21,7 +21,6 @@ const SignUp = () => {
 
     return (
         <>
-            <Navbar />
             <div className="relative min-h-screen bg-black">
                 {/* Background Image */}
                 <img
@@ -29,7 +28,7 @@ const SignUp = () => {
                     alt="background"
                     className="absolute inset-0 w-full h-full object-cover opacity-70"
                 />
-
+                <Navbar/>
                 {/* Signup Form */}
                 <div className="relative z-10 flex items-center justify-center min-h-screen px-4">
                     <div className="bg-black bg-opacity-90 text-white rounded-2xl shadow-2xl p-8 w-full max-w-md text-center">

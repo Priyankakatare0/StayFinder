@@ -13,9 +13,9 @@ const ListingList = ({ listings }) => {
               className="w-full h-64 object-cover"
             />
             <div className="p-2 ">
-              <h3 className="text-2xl font-semibold text-white mb-1">{listing.title}</h3>
-              <span className="text-xl text-white mb-1">📍 {listing.location}</span>
-              <span className="text-xl text-white font-semibold ml-2">₹{listing.price} / night</span>
+              <h3 className="text-2xl font-semibold text-black mb-1">{listing.title}</h3>
+              <span className="text-xl text-black mb-1">📍 {listing.location}</span>
+              <span className="text-xl text-black font-semibold ml-2">₹{listing.price} / night</span>
             </div>
           </div>
         </Link>

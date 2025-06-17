@@ -5,7 +5,9 @@ const cors = require('cors');
 const listingModel = require('./Models/listing');
 const UserModel = require('./Models/user');
 const { jwtMiddleware, generateToken } = require('./jwt');
-const { userSchema, listingSchema } = require('./schema');
+const { userSchema, listingSchema, bookingSchema, ratingValidationSchema } = require('./schema');
+const bookingModel = require('./Models/booking');
+const ratingModel = require('./Models/Rating');
 
 const app = express();
 app.use(express.json());
@@ -65,7 +67,7 @@ app.post('/signup', async (req, res) => {
         console.log("Token is: ", token);
 
         res.status(200).json({ response: user, token });
-        sendMail(user.email, user.username);
+        // sendMail(user.email, user.username);
     }
     catch (err) {
         res.json({ message: "Server error", error: err.message });
@@ -113,7 +115,64 @@ app.post('/add_listing', async(req, res) => {
         console.log(err);
         return res.status(500).json({ message: "Something went wrong!", details: err.message });
     }
-})
+});
+
+app.post('/listing/:id/reservations', async (req, res) => {
+    const listingId = req.params.id;
+    const bookingData = { ...req.body, listing_id: listingId };
+
+    const { value, error } = bookingSchema.validate(bookingData);
+    if (error) {
+        console.log(error);
+        return res.status(400).json({ message: "Invalid input", details: error.details });
+    }
+
+    try {
+        const booking = await bookingModel.create(value);
+        return res.status(200).json({ message: "Reservation successful!", booking });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: "Error creating booking", details: err.message });
+    }
+});
+
+app.post('/review', async (req, res) => {
+    const { value, error } = ratingValidationSchema.validate(req.body);
+    
+    if (error) {
+        return res.status(400).json({ message: "Invalid request", details: error.details });
+    }
+
+    try {
+        const rating = await ratingModel.create({
+            rating: value.rating,
+            user_id: value.user_id,
+            listing_id: value.listing_id, // corrected from movie_id
+            comment: value.comment || '',
+        });
+
+        return res.status(200).json({ message: "Rating added successfully!" });
+    } catch (err) {
+        console.log("Error", err);
+        return res.status(500).json({ message: "Something went wrong!", details: err.message });
+    }
+});
+
+
+app.get('/listing/:id/reviews', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const reviews = await ratingModel.find({ listing_id: id });
+    return res.status(200).json(reviews);
+  } catch (err) {
+    console.error("Error fetching reviews:", err);
+    return res.status(500).json({
+      message: "Failed to fetch reviews",
+      details: err.message,
+    });
+  }
+});
 
 app.listen(3000, () => {
     console.log("Server is running on 3000");

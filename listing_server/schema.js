@@ -1,5 +1,5 @@
 const Joi = require('joi');
-const JoiObjectId = require('joi-objectid')(Joi); 
+const JoiObjectId = require('joi-objectid')(Joi);
 
 module.exports.userSchema = Joi.object({
     username: Joi.string().required(),
@@ -23,4 +23,28 @@ module.exports.listingSchema = Joi.object({
         })
     ).required(),
     host: JoiObjectId().required()
+});
+
+module.exports.bookingSchema = Joi.object({
+    check_in: Joi.date().required(),
+    check_out: Joi.date().required(),
+    no_of_guest: Joi.number().required(),
+    room_type: Joi.string().required(),
+    listing_id: JoiObjectId().required(),
+    user_id: JoiObjectId().required(),
+    first_name: Joi.string().required(),
+    last_name: Joi.string().required(),
+    phone_no: Joi.string().required(),
+    email: Joi.string().email().required(),
+    // payment_status: Joi.string().valid('pending', 'paid', 'failed').required(),
+    // amount_paid: Joi.number().required(),
+    // payment_method: Joi.string().valid('card', 'upi', 'cash', 'wallet').required(),
+    // transaction_id: Joi.string().optional()
+});
+
+module.exports.ratingValidationSchema = Joi.object({
+    rating: Joi.number().min(1).max(5).required(),
+    listing_id: Joi.string().required(),
+    user_id: Joi.string().required(),
+    comment: Joi.string().allow('').optional()
 });

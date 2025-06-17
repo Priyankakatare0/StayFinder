@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+import Navbar from './Navabar';
 
 const AddListing = () => {
     const [title, setTitle] = useState('');
@@ -75,7 +76,7 @@ const AddListing = () => {
                 alt="background"
                 className="absolute inset-0 w-full h-full object-cover opacity-60"
             />
-
+            <Navbar/>
             <div className="relative z-10 flex items-center justify-center min-h-screen px-4">
                 <form
                     onSubmit={handleOnSubmit}
