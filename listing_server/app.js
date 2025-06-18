@@ -92,7 +92,7 @@ app.get('/listing/:id', async (req, res) => {
         if (!listing) {
             return res.status(404).json({ error: " Hotel not found" });
         }
-         res.status(200).json(listing);
+        res.status(200).json(listing);
     }
     catch (err) {
         console.error("Error Fetching Hotel Details", err);
@@ -100,13 +100,13 @@ app.get('/listing/:id', async (req, res) => {
     }
 });
 
-app.post('/add_listing', async(req, res) => {
-    const {value, error} = listingSchema.validate(req.body);
-    if(error) {
+app.post('/add_listing', async (req, res) => {
+    const { value, error } = listingSchema.validate(req.body);
+    if (error) {
         console.log("Error", error);
         return res.status(400).json({ message: "Something is wrong!", details: error.details });
     }
-    try{
+    try {
         const listing = await listingModel.create(value);
         console.log("Success");
         return res.status(200).json({ message: "Listing added successfully!" })
@@ -136,9 +136,59 @@ app.post('/listing/:id/reservations', async (req, res) => {
     }
 });
 
+// UPDATE LISTING (no token check)
+app.put('/listing/:id', async (req, res) => {
+  const { id } = req.params;
+  const updateData = req.body;
+
+  try {
+    const listing = await listingModel.findById(id);
+    if (!listing) {
+      return res.status(404).json({ message: "Listing not found" });
+    }
+
+    if (listing.host.toString() !== updateData.userId) {
+      return res.status(403).json({ message: "You don't have permission to update this listing" });
+    }
+
+    const updatedListing = await listingModel.findByIdAndUpdate(id, updateData, {
+      new: true,
+      runValidators: true,
+    });
+
+    return res.status(200).json({ message: "Listing updated!", data: updatedListing });
+  } catch (err) {
+    console.error("Error:", err);
+    return res.status(500).json({ message: "Server error", details: err.message });
+  }
+});
+
+// DELETE LISTING (no token check)
+app.delete('/listing/:id', async (req, res) => {
+  const { id } = req.params;
+  const { userId } = req.query;
+
+  try {
+    const listing = await listingModel.findById(id);
+    if (!listing) {
+      return res.status(404).json({ message: "Listing not found" });
+    }
+
+    if (listing.host.toString() !== userId) {
+      return res.status(403).json({ message: "You don't have permission to delete this listing" });
+    }
+
+    const deleted = await listingModel.findByIdAndDelete(id);
+    return res.status(200).json({ message: "Listing deleted!", data: deleted });
+  } catch (err) {
+    console.error("Error", err);
+    return res.status(500).json({ message: "Server error", details: err.message });
+  }
+});
+
 app.post('/review', async (req, res) => {
     const { value, error } = ratingValidationSchema.validate(req.body);
-    
+
     if (error) {
         return res.status(400).json({ message: "Invalid request", details: error.details });
     }
@@ -160,18 +210,18 @@ app.post('/review', async (req, res) => {
 
 
 app.get('/listing/:id/reviews', async (req, res) => {
-  const { id } = req.params;
+    const { id } = req.params;
 
-  try {
-    const reviews = await ratingModel.find({ listing_id: id });
-    return res.status(200).json(reviews);
-  } catch (err) {
-    console.error("Error fetching reviews:", err);
-    return res.status(500).json({
-      message: "Failed to fetch reviews",
-      details: err.message,
-    });
-  }
+    try {
+        const reviews = await ratingModel.find({ listing_id: id });
+        return res.status(200).json(reviews);
+    } catch (err) {
+        console.error("Error fetching reviews:", err);
+        return res.status(500).json({
+            message: "Failed to fetch reviews",
+            details: err.message,
+        });
+    }
 });
 
 app.listen(3000, () => {

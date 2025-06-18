@@ -9,7 +9,6 @@ module.exports.userSchema = Joi.object({
         .required()
 });
 
-
 module.exports.listingSchema = Joi.object({
     title: Joi.string().required(),
     location: Joi.string().required(),

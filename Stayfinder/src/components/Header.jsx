@@ -5,16 +5,16 @@ import Listings from './Listings';
 
 
 const Header = () => {
- const [showPopup, setShowPopup] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
 
-const handleSearch = (e) => {
-  e.preventDefault();
-  setShowPopup(true);
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setShowPopup(true);
 
-  setTimeout(() => {
-    setShowPopup(false);
-  }, 2000); // 2 seconds
-};
+    setTimeout(() => {
+      setShowPopup(false);
+    }, 2000); // 2 seconds
+  };
 
 
   return (
@@ -113,13 +113,11 @@ const handleSearch = (e) => {
               Search
             </button>
           </div>
-        {showPopup && (
-  <div className="fixed top-6 left-1/2 transform -translate-x-1/2 text-2xl text-white px-4 py-2 rounded-md shadow-lg z-50">
-    🏨 Listings coming soon...
-  </div>
-)}
-
-
+          {showPopup && (
+            <div className="fixed top-6 left-1/2 transform -translate-x-1/2 text-2xl text-white px-4 py-2 rounded-md shadow-lg z-50">
+              🏨 Listings coming soon...
+            </div>
+          )}
         </div>
       </div>
     </div>

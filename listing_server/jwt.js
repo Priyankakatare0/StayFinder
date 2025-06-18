@@ -3,7 +3,30 @@ const UserModel = require('./Models/user');
 
 const JWT_SECRET = 'OerjfdAPDFOAojdufiwe4rw';
 
-const jwtMiddleware = async (req, res, next) =>{
+
+const jwtMiddleware = (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) {
+    return res.status(401).json({ message: "No token provided" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, secretKey);
+    req.user = decoded; // now req.user._id is available
+    next();
+  } catch (err) {
+    return res.status(401).json({ message: "Invalid or expired token" });
+  }
+};
+
+
+const generateToken = (userData) => {
+    return jwt.sign(userData, JWT_SECRET, {expiresIn: '8h'});
+}
+
+module.exports = {jwtMiddleware, generateToken};
+
+/*const jwtMiddleware = async (req, res, next) =>{
     const authHeader = req.headers.authorization;
     
     if(!authHeader || !authHeader.startsWith('Bearer'))
@@ -24,9 +47,4 @@ const jwtMiddleware = async (req, res, next) =>{
         res.status(401).json({error: 'Invalid Token'});
     }
 }
-
-const generateToken = (userData) => {
-    return jwt.sign(userData, JWT_SECRET, {expiresIn: '8h'});
-}
-
-module.exports = {jwtMiddleware, generateToken};
+*/ 

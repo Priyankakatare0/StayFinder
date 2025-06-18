@@ -40,7 +40,7 @@ const bookingSchema = new mongoose.Schema({
         ref: "User"
     },
     email: {
-        type: String, 
+        type: String,
         required: true
     }
 }, { timestamps: true });

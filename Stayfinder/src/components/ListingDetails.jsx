@@ -4,14 +4,14 @@ import axios from 'axios';
 import Booking from '../Page/Booking';
 import Show_review from './Show_review';
 import Review from './Review';
+import EditListing from './EditListing';
 
 const ListingDetails = () => {
   const { id } = useParams();
   const [detail, setDetail] = useState(null);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('Overview');
-  const [showBookingForm, setShowBookingForm] = useState(false); // only triggered on "Book Now" button click
-
+  const [showBookingForm, setShowBookingForm] = useState(false);
   useEffect(() => {
     const fetchListingData = async () => {
       try {
@@ -42,16 +42,15 @@ const ListingDetails = () => {
 
           {/* Tabs */}
           <div className="flex gap-6 border-b text-gray-600 mb-6">
-            {['Overview', 'Reviews', 'Availability', 'Booking'].map((tab) => (
+            {['Overview', 'Reviews', 'Edit', 'Availability', 'Booking'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => {
                   setActiveTab(tab);
                   setShowBookingForm(false); // reset booking form on tab change
                 }}
-                className={`pb-2 text-xl border-b-2 ${
-                  activeTab === tab ? 'border-orange-500 text-black font-medium' : 'border-transparent hover:border-orange-300'
-                }`}
+                className={`pb-2 text-xl border-b-2 ${activeTab === tab ? 'border-orange-500 text-black font-medium' : 'border-transparent hover:border-orange-300'
+                  }`}
               >
                 {tab}
               </button>
@@ -98,6 +97,16 @@ const ListingDetails = () => {
                   </div>
                 </>
               )}
+
+              {activeTab === 'Edit' && (
+                <EditListing
+                  listing={detail}
+                  onUpdate={(updated) => setDetail(updated)}
+                  onDelete={() => window.location.href = '/'} // clean, works!
+                />
+              )}
+
+
 
               {activeTab === 'Booking' && (
                 <>

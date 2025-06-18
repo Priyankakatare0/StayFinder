@@ -21,7 +21,7 @@ const Login = () => {
     };
 
     return (
-        <>        
+        <>
             <div className="relative min-h-screen bg-black">
                 {/* Background Image */}
                 <img
