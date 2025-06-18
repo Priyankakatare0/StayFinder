@@ -36,7 +36,7 @@ const Show_review = () => {
               key={review._id}
               className="bg-white border border-gray-300 rounded-2xl shadow-md hover:shadow-lg p-6 transition-all duration-300"
             >
-              <p className="text-yellow-500 font-semibold text-xl mb-2">⭐ {review.rating} / 5</p>
+              <p className="text-yellow-500 font-semibold text-xl mb-2">{"⭐".repeat(Math.round(review.rating))} </p>
               <p className="text-gray-800 text-base leading-relaxed">
                 {review.comment || 'No comment provided.'}
               </p>

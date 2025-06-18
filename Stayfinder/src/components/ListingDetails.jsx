@@ -42,7 +42,7 @@ const ListingDetails = () => {
 
           {/* Tabs */}
           <div className="flex gap-6 border-b text-gray-600 mb-6">
-            {['Overview', 'Reviews', 'Map', 'Availability', 'Booking'].map((tab) => (
+            {['Overview', 'Reviews', 'Availability', 'Booking'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => {

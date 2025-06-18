@@ -5,14 +5,21 @@ import Listings from './Listings';
 
 
 const Header = () => {
-  // const [query, setQuery] = useState('');
-  
-  // const filterListing = Listings
+ const [showPopup, setShowPopup] = useState(false);
+
+const handleSearch = (e) => {
+  e.preventDefault();
+  setShowPopup(true);
+
+  setTimeout(() => {
+    setShowPopup(false);
+  }, 2000); // 2 seconds
+};
 
 
   return (
-   <div className="bg-gradient-to-b from-gray-200 to-transparent min-h-screen flex justify-center items-center p-3 rounded-xl" >
-      <div className="relative w-full max-w-8xl rounded-xl overflow-hidden border border-gray-300" style={{backgroundImage: `url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhkAREZs4aKlVQvSrX2XxhRcsehtvlT_P4bQ&s')`}} >
+    <div className="bg-gradient-to-b from-gray-200 to-transparent min-h-screen flex justify-center items-center p-3 rounded-xl" >
+      <div className="relative w-full max-w-8xl rounded-xl overflow-hidden border border-gray-300" style={{ backgroundImage: `url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhkAREZs4aKlVQvSrX2XxhRcsehtvlT_P4bQ&s')` }} >
 
         {/* Background Image */}
         <img
@@ -28,7 +35,7 @@ const Header = () => {
 
           {/* Hero Content */}
           <div className="flex flex-col lg:flex-row justify-between items-start gap-10 mt-16 md:mt-24">
-            {/* Left: Heading + Description */}
+            {/* Left Stats */}
             <div className="flex-1">
               <h1 className="text-5xl md:text-6xl font-bold leading-tight">
                 Stay Quietly,<br /> With No Worries
@@ -100,10 +107,19 @@ const Header = () => {
             </div>
 
             {/* Search Button */}
-            <button className="bg-black text-white px-6 py-3 rounded-md hover:bg-gray-800 mt-6 w-full sm:w-auto">
+            <button
+              onClick={handleSearch}
+              className="bg-black text-white px-6 py-3 rounded-md hover:bg-gray-800 mt-6 w-full sm:w-auto">
               Search
             </button>
           </div>
+        {showPopup && (
+  <div className="fixed top-6 left-1/2 transform -translate-x-1/2 text-2xl text-white px-4 py-2 rounded-md shadow-lg z-50">
+    🏨 Listings coming soon...
+  </div>
+)}
+
+
         </div>
       </div>
     </div>

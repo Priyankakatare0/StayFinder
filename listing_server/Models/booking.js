@@ -40,27 +40,9 @@ const bookingSchema = new mongoose.Schema({
         ref: "User"
     },
     email: {
-        type: String, // only type, no match pattern needed
+        type: String, 
         required: true
-    },
-    // payment_status: {
-    //     type: String,
-    //     enum: ['pending', 'paid', 'failed'],
-    //     default: 'pending'
-    // },
-    // amount_paid: {
-    //     type: Number,
-    //     default: 0
-    // },
-    // payment_method: {
-    //     type: String,
-    //     enum: ['card', 'upi', 'cash', 'wallet'],
-    //     default: 'card'
-    // },
-    // transaction_id: {
-    //     type: String
-    // }
-
+    }
 }, { timestamps: true });
 
 const bookingModel = mongoose.model("Booking", bookingSchema);

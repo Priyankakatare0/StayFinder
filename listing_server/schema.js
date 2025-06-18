@@ -36,10 +36,6 @@ module.exports.bookingSchema = Joi.object({
     last_name: Joi.string().required(),
     phone_no: Joi.string().required(),
     email: Joi.string().email().required(),
-    // payment_status: Joi.string().valid('pending', 'paid', 'failed').required(),
-    // amount_paid: Joi.number().required(),
-    // payment_method: Joi.string().valid('card', 'upi', 'cash', 'wallet').required(),
-    // transaction_id: Joi.string().optional()
 });
 
 module.exports.ratingValidationSchema = Joi.object({
