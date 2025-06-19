@@ -1,8 +1,9 @@
-const jwt = require ('jsonwebtoken');
+require('dotenv').config();
+const jwt = require('jsonwebtoken');
 const UserModel = require('./Models/user');
 
-const JWT_SECRET = 'OerjfdAPDFOAojdufiwe4rw';
-
+// Load from .env
+const JWT_SECRET = process.env.JWT_SECRET;
 
 const jwtMiddleware = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
@@ -11,40 +12,16 @@ const jwtMiddleware = (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, secretKey);
-    req.user = decoded; // now req.user._id is available
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded;
     next();
   } catch (err) {
     return res.status(401).json({ message: "Invalid or expired token" });
   }
 };
 
-
 const generateToken = (userData) => {
-    return jwt.sign(userData, JWT_SECRET, {expiresIn: '8h'});
-}
+  return jwt.sign(userData, JWT_SECRET, { expiresIn: '8h' });
+};
 
-module.exports = {jwtMiddleware, generateToken};
-
-/*const jwtMiddleware = async (req, res, next) =>{
-    const authHeader = req.headers.authorization;
-    
-    if(!authHeader || !authHeader.startsWith('Bearer'))
-        return res.status(401).json({error: "Unauthorized"});
-
-        const token = authHeader.split(' ')[1];
-    // const token = req.headers.authorization.split(' ')[1];
-    // if(!token) return
-    try{
-        const decoded = jwt.verify(token, JWT_SECRET);
-        const user = await UserModel.findById(decoded.id);
-        if(!user) return res.status(401).json({ error: "User not found" });
-
-        req.user = user;
-        next();
-    } catch(err) {
-        console.log(err);
-        res.status(401).json({error: 'Invalid Token'});
-    }
-}
-*/ 
+module.exports = { jwtMiddleware, generateToken };

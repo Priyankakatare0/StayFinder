@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
@@ -13,11 +14,10 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-mongoose.connect('mongodb://localhost:27017/StayFinder')
-    .then(() => console.log("MongoDB connected"))
-    .catch((err) => console.log("MongoDB connection error:", err)
-    );
 
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => console.log('✅ Connected to MongoDB Atlas'))
+    .catch((err) => console.error('❌ Connection error:', err));
 
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
@@ -138,52 +138,52 @@ app.post('/listing/:id/reservations', async (req, res) => {
 
 // UPDATE LISTING (no token check)
 app.put('/listing/:id', async (req, res) => {
-  const { id } = req.params;
-  const updateData = req.body;
+    const { id } = req.params;
+    const updateData = req.body;
 
-  try {
-    const listing = await listingModel.findById(id);
-    if (!listing) {
-      return res.status(404).json({ message: "Listing not found" });
+    try {
+        const listing = await listingModel.findById(id);
+        if (!listing) {
+            return res.status(404).json({ message: "Listing not found" });
+        }
+
+        if (listing.host.toString() !== updateData.userId) {
+            return res.status(403).json({ message: "You don't have permission to update this listing" });
+        }
+
+        const updatedListing = await listingModel.findByIdAndUpdate(id, updateData, {
+            new: true,
+            runValidators: true,
+        });
+
+        return res.status(200).json({ message: "Listing updated!", data: updatedListing });
+    } catch (err) {
+        console.error("Error:", err);
+        return res.status(500).json({ message: "Server error", details: err.message });
     }
-
-    if (listing.host.toString() !== updateData.userId) {
-      return res.status(403).json({ message: "You don't have permission to update this listing" });
-    }
-
-    const updatedListing = await listingModel.findByIdAndUpdate(id, updateData, {
-      new: true,
-      runValidators: true,
-    });
-
-    return res.status(200).json({ message: "Listing updated!", data: updatedListing });
-  } catch (err) {
-    console.error("Error:", err);
-    return res.status(500).json({ message: "Server error", details: err.message });
-  }
 });
 
 // DELETE LISTING (no token check)
 app.delete('/listing/:id', async (req, res) => {
-  const { id } = req.params;
-  const { userId } = req.query;
+    const { id } = req.params;
+    const { userId } = req.query;
 
-  try {
-    const listing = await listingModel.findById(id);
-    if (!listing) {
-      return res.status(404).json({ message: "Listing not found" });
+    try {
+        const listing = await listingModel.findById(id);
+        if (!listing) {
+            return res.status(404).json({ message: "Listing not found" });
+        }
+
+        if (listing.host.toString() !== userId) {
+            return res.status(403).json({ message: "You don't have permission to delete this listing" });
+        }
+
+        const deleted = await listingModel.findByIdAndDelete(id);
+        return res.status(200).json({ message: "Listing deleted!", data: deleted });
+    } catch (err) {
+        console.error("Error", err);
+        return res.status(500).json({ message: "Server error", details: err.message });
     }
-
-    if (listing.host.toString() !== userId) {
-      return res.status(403).json({ message: "You don't have permission to delete this listing" });
-    }
-
-    const deleted = await listingModel.findByIdAndDelete(id);
-    return res.status(200).json({ message: "Listing deleted!", data: deleted });
-  } catch (err) {
-    console.error("Error", err);
-    return res.status(500).json({ message: "Server error", details: err.message });
-  }
 });
 
 app.post('/review', async (req, res) => {

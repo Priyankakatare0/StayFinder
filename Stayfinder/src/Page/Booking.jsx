@@ -28,7 +28,10 @@ const Booking = ({ onClose }) => {
 
     try {
       const res = await axios.post(`http://localhost:3000/listing/${id}/reservations`, bookingData);
-      if (res.status === 200) onClose(); // close the form after successful booking
+      if (res.status === 200) {
+        alert('Booked Successfully!');
+        onClose();
+      }
     } catch (err) {
       console.error("Booking error:", err);
     }
