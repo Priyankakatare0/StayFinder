@@ -43,3 +43,12 @@ module.exports.ratingValidationSchema = Joi.object({
     user_id: Joi.string().required(),
     comment: Joi.string().allow('').optional()
 });
+
+module.exports.paymentValidation = Joi.object({
+    user_id : JoiObjectId().required(),
+    // listing_id: JoiObjectId().required(),
+    currency : Joi.string().valid('INR', 'USD', 'EUR').optional(),
+    amount: Joi.number().required(),
+    status : Joi.string().valid('success', 'failed', 'pending').required(),
+    transactionId : Joi.string().required(),
+});

@@ -6,14 +6,14 @@ const cors = require('cors');
 const listingModel = require('./Models/listing');
 const UserModel = require('./Models/user');
 const { jwtMiddleware, generateToken } = require('./jwt');
-const { userSchema, listingSchema, bookingSchema, ratingValidationSchema } = require('./schema');
+const { userSchema, listingSchema, bookingSchema, ratingValidationSchema, paymentValidation } = require('./schema');
 const bookingModel = require('./Models/booking');
 const ratingModel = require('./Models/Rating');
+const paymentModel = require('./Models/payment');
 
 const app = express();
 app.use(express.json());
 app.use(cors());
-
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('✅ Connected to MongoDB Atlas'))
@@ -39,6 +39,7 @@ app.post('/login', async (req, res) => {
             isAdmin: user.isAdmin
         }
         const token = generateToken(payload);
+        console.log("Token is: ", token);
         res.status(200).json({ response: user, token });
     }
     catch (err) {
@@ -117,6 +118,9 @@ app.post('/add_listing', async (req, res) => {
     }
 });
 
+// DISABLED: Direct booking without payment is not allowed
+// Use /listing/:id/payment endpoint instead which handles both payment and booking
+/*
 app.post('/listing/:id/reservations', async (req, res) => {
     const listingId = req.params.id;
     const bookingData = { ...req.body, listing_id: listingId };
@@ -135,6 +139,7 @@ app.post('/listing/:id/reservations', async (req, res) => {
         return res.status(500).json({ message: "Error creating booking", details: err.message });
     }
 });
+*/
 
 // UPDATE LISTING (no token check)
 app.put('/listing/:id', async (req, res) => {
@@ -221,6 +226,55 @@ app.get('/listing/:id/reviews', async (req, res) => {
             message: "Failed to fetch reviews",
             details: err.message,
         });
+    }
+}); 
+
+app.post('/listing/:id/payment', jwtMiddleware, async( req, res) => {
+    const { paymentData, bookingData } = req.body;
+    
+    // Validate payment data
+    const {value: paymentValue, error: paymentError} = paymentValidation.validate(paymentData);
+    if(paymentError) {
+        console.log("Payment validation error:", paymentError);
+        return res.status(400).json({message: "Invalid payment data", details: paymentError.details});
+    }
+
+    // Validate booking data
+    const listingId = req.params.id;
+    const completeBookingData = { ...bookingData, listing_id: listingId };
+    const {value: bookingValue, error: bookingError} = bookingSchema.validate(completeBookingData);
+    if(bookingError) {
+        console.log("Booking validation error:", bookingError);
+        return res.status(400).json({message: "Invalid booking data", details: bookingError.details});
+    }
+
+    try{
+        // Only proceed if payment status is success
+        if(paymentValue.status !== 'success') {
+            return res.status(400).json({message: "Payment not successful"});
+        }
+
+        // Create payment record first
+        const payment = await paymentModel.create({
+            user_id : paymentValue.user_id,
+            listing_id: listingId,
+            currency: paymentValue.currency,
+            amount: paymentValue.amount,
+            status: paymentValue.status,
+            transactionId: paymentValue.transactionId,
+        });
+
+        // Only create booking if payment was successful
+        const booking = await bookingModel.create(bookingValue);
+
+        return res.status(200).json({
+            message: "Payment and booking completed successfully!",
+            payment: payment,
+            booking: booking
+        });
+    } catch(err) {
+        console.log("Error", err) ;
+        return res.status(500).json({ message: "Something wrong!", details: err.message });
     }
 });
 

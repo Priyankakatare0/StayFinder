@@ -14,6 +14,7 @@ const Login = () => {
             .then(result => {
                 if (result.data.token) {
                     localStorage.setItem("userId", result.data.response._id);
+                    localStorage.setItem("token", result.data.token); // Store the token
                     navigate('/');
                 }
             })

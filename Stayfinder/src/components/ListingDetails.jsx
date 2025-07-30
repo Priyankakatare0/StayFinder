@@ -12,6 +12,10 @@ const ListingDetails = () => {
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('Overview');
   const [showBookingForm, setShowBookingForm] = useState(false);
+  
+  // Get current user ID from localStorage
+  const currentUserId = localStorage.getItem('userId');
+  
   useEffect(() => {
     const fetchListingData = async () => {
       try {
@@ -34,15 +38,21 @@ const ListingDetails = () => {
           <h2 className="text-3xl font-bold mb-6">{detail.title}</h2>
 
           {/* Images */}
-          <div className="grid grid-cols-3 gap-4 h-[500px] mb-8">
-            <img src={detail.img} alt="Main Hotel" className="col-span-2 row-span-2 object-cover w-full h-full rounded-xl" />
-            <img src={detail.img2 || detail.img} alt="Room 1" className="object-cover w-full h-full rounded-xl" />
-            <img src={detail.img3 || detail.img} alt="Room 2" className="object-cover w-full h-full rounded-xl" />
+          <div className="grid grid-cols-3 grid-rows-2 gap-4 h-[500px] mb-8">
+            <div className="col-span-2 row-span-2 rounded-xl overflow-hidden">
+              <img src={detail.img} alt="Main Hotel" className="object-cover w-full h-full" />
+            </div>
+            <div className="rounded-xl overflow-hidden">
+              <img src={detail.img2 || detail.img} alt="Room 1" className="object-cover w-full h-full" />
+            </div>
+            <div className="rounded-xl overflow-hidden">
+              <img src={detail.img3 || detail.img} alt="Room 2" className="object-cover w-full h-full" />
+            </div>
           </div>
 
           {/* Tabs */}
           <div className="flex gap-6 border-b text-gray-600 mb-6">
-            {['Overview', 'Reviews', 'Edit', 'Availability', 'Booking'].map((tab) => (
+            {['Overview', 'Reviews', ...(detail.host === currentUserId ? ['Edit'] : []), 'Availability', 'Booking'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => {
@@ -126,7 +136,10 @@ const ListingDetails = () => {
                       </button>
                     </div>
                   ) : (
-                    <Booking onClose={() => setShowBookingForm(false)} />
+                    <Booking 
+                      onClose={() => setShowBookingForm(false)} 
+                      listingPrice={detail.price}
+                    />
                   )}
                 </>
               )}

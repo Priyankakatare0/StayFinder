@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import Payment from '../Features/Payment';
 
-const Booking = ({ onClose }) => {
+const Booking = ({ onClose, listingPrice }) => {
   const [check_in, setCheck_in] = useState('');
   const [check_out, setCheck_out] = useState('');
   const [no_of_guest, setNo_of_guest] = useState(1);
@@ -10,11 +11,28 @@ const Booking = ({ onClose }) => {
   const [last_name, setLast_name] = useState('');
   const [phone_no, setPhone_no] = useState('');
   const [email, setEmail] = useState('');
+  
+  // Payment states
+  const [showPayment, setShowPayment] = useState(false);
+  const [bookingData, setBookingData] = useState(null);
+  
   const id = window.location.pathname.split('/').pop(); // fallback to get ID
 
-  const handleOnSubmit = async (e) => {
+  // Calculate total amount based on dates
+  const calculateTotal = () => {
+    if (check_in && check_out) {
+      const checkInDate = new Date(check_in);
+      const checkOutDate = new Date(check_out);
+      const timeDifference = checkOutDate.getTime() - checkInDate.getTime();
+      const dayDifference = Math.ceil(timeDifference / (1000 * 3600 * 24));
+      return dayDifference > 0 ? dayDifference * (listingPrice || 0) : 0;
+    }
+    return 0;
+  };
+
+  const handleBookingSubmit = async (e) => {
     e.preventDefault();
-    const bookingData = {
+    const currentBookingData = {
       check_in,
       check_out,
       no_of_guest,
@@ -26,16 +44,23 @@ const Booking = ({ onClose }) => {
       user_id: localStorage.getItem('userId'),
     };
 
-    try {
-      const res = await axios.post(`http://localhost:3000/listing/${id}/reservations`, bookingData);
-      if (res.status === 200) {
-        alert('Booked Successfully!');
-        onClose();
-      }
-    } catch (err) {
-      console.error("Booking error:", err);
-    }
+    // No API call here - just proceed to payment
+    // Payment component will handle both payment and booking creation
+    setBookingData(currentBookingData);
+    setShowPayment(true);
   };
+
+  // If payment should be shown, render the Payment component
+  if (showPayment && bookingData) {
+    return (
+      <Payment 
+        onClose={onClose}
+        bookingData={bookingData}
+        listingPrice={listingPrice}
+        listingId={id}
+      />
+    );
+  }
 
   return (
     <div className="fixed inset-0 border-4 border-gray-100 rounded-2xl z-50 flex justify-center items-center">
@@ -47,7 +72,7 @@ const Booking = ({ onClose }) => {
           &times;
         </button>
 
-        <form onSubmit={handleOnSubmit}>
+        <form onSubmit={handleBookingSubmit}>
           <h2 className="text-2xl font-semibold mb-4">Booking Details</h2>
           <div className="grid grid-cols-2 gap-6 mb-6">
             <div>
@@ -57,6 +82,7 @@ const Booking = ({ onClose }) => {
                 value={check_in}
                 onChange={(e) => setCheck_in(e.target.value)}
                 className="w-full border rounded-md px-4 py-3"
+                required
               />
             </div>
             <div>
@@ -66,6 +92,7 @@ const Booking = ({ onClose }) => {
                 value={check_out}
                 onChange={(e) => setCheck_out(e.target.value)}
                 className="w-full border rounded-md px-4 py-3"
+                required
               />
             </div>
             <div>
@@ -102,6 +129,7 @@ const Booking = ({ onClose }) => {
               value={first_name}
               onChange={(e) => setFirst_name(e.target.value)}
               className="w-full border rounded-md px-4 py-3"
+              required
             />
             <input
               type="text"
@@ -109,6 +137,7 @@ const Booking = ({ onClose }) => {
               value={last_name}
               onChange={(e) => setLast_name(e.target.value)}
               className="w-full border rounded-md px-4 py-3"
+              required
             />
             <input
               type="text"
@@ -116,6 +145,7 @@ const Booking = ({ onClose }) => {
               value={phone_no}
               onChange={(e) => setPhone_no(e.target.value)}
               className="w-full border rounded-md px-4 py-3"
+              required
             />
             <input
               type="email"
@@ -123,11 +153,32 @@ const Booking = ({ onClose }) => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full border rounded-md px-4 py-3"
+              required
             />
           </div>
 
+          {/* Price Summary - Using Same Styling */}
+          {check_in && check_out && (
+            <div className="mb-6 p-4 border rounded-md">
+              <h3 className="text-lg font-semibold mb-2">Price Summary</h3>
+              <div className="flex justify-between text-sm mb-1">
+                <span>Price per night:</span>
+                <span>₹{listingPrice || 0}</span>
+              </div>
+              <div className="flex justify-between text-sm mb-1">
+                <span>Number of nights:</span>
+                <span>{Math.ceil((new Date(check_out) - new Date(check_in)) / (1000 * 3600 * 24))}</span>
+              </div>
+              <hr className="my-2" />
+              <div className="flex justify-between font-semibold">
+                <span>Total Amount:</span>
+                <span>₹{calculateTotal()}</span>
+              </div>
+            </div>
+          )}
+
           <button type="submit" className="w-full bg-black text-white py-3 rounded-md hover:bg-gray-900 transition">
-            Book Now
+            Continue to Payment
           </button>
         </form>
       </div>
