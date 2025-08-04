@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
+import { listingAPI } from '../api';
 import Navbar from './Navabar';
 
 const AddListing = () => {
@@ -36,10 +36,10 @@ const AddListing = () => {
 
         try {
             if (id) {
-                const res = await axios.put(`http://localhost:3000/listing/${id}`, listingData);
+                const res = await listingAPI.updateListing(id, listingData);
                 if (res.status === 200) navigate('/');
             } else {
-                const res = await axios.post('http://localhost:3000/add_listing', listingData);
+                const res = await listingAPI.addListing(listingData);
                 if (res.status === 200) navigate('/');
             }
         } catch (err) {
@@ -49,7 +49,7 @@ const AddListing = () => {
 
     useEffect(() => {
         if (id) {
-            axios.get(`http://localhost:3000/listing/${id}`)
+            listingAPI.getListingById(id)
                 .then((res) => {
                     const data = res.data;
                     setTitle(data.title);

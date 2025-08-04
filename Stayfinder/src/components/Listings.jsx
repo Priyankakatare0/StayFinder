@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { listingAPI } from '../api';
 import ListingList from './ListingList';
 
 const Listings = () => {
@@ -9,7 +9,7 @@ const Listings = () => {
   useEffect(() => {
     const fetchListing = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/');
+        const response = await listingAPI.getAllListings();
         setListings(response.data);
       } catch (error) {
         console.error("Error fetching hotels", error);
@@ -31,7 +31,7 @@ const Listings = () => {
       <div className="flex flex-col md:flex-row justify-between items-center gap-10 px-6">
         {/* Left Heading */}
         <div className="text-left">
-          <h1 className="text-5xl ml-15 font-extrabold text-black leading-tight mb-10">
+          <h1 className="text-5xl ml-0 font-extrabold text-black leading-tight mb-10">
             Explore Our Best List<br />5–Stars Hotel!
           </h1>
         </div>
@@ -48,7 +48,7 @@ const Listings = () => {
               placeholder="Find hotel"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="flex-grow outline-none bg-transparent text-black placeholder-gray-500"
+              className="flex-grow outline-none bg-transparent text-lg text-black placeholder-gray-500"
             />
             <button className="ml-2 text-xl">🔍</button>
           </div>
@@ -56,7 +56,7 @@ const Listings = () => {
       </div>
 
       {/* Listing Grid */}
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7.5xl ml-4 mr-3  mx-auto">
         <ListingList listings={filteredListings} />
       </div>
     </div>

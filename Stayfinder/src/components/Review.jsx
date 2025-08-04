@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { reviewAPI } from '../api';
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FaStar } from 'react-icons/fa';
@@ -15,7 +15,7 @@ const Review = () => {
     e.preventDefault();
 
     try {
-      const res = await axios.post('http://localhost:3000/review', {
+      const res = await reviewAPI.addReview({
         rating,
         comment,
         listing_id: listingId,

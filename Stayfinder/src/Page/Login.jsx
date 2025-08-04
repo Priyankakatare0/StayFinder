@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { authAPI } from '../api';
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from './Navabar';
@@ -10,11 +10,11 @@ const Login = () => {
 
     const handleOnSubmit = (e) => {
         e.preventDefault();
-        axios.post("http://localhost:3000/login", { username, password })
+        authAPI.login({ username, password })
             .then(result => {
                 if (result.data.token) {
                     localStorage.setItem("userId", result.data.response._id);
-                    localStorage.setItem("token", result.data.token); // Store the token
+                    localStorage.setItem("token", result.data.token);
                     navigate('/');
                 }
             })

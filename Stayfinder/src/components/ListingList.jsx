@@ -6,11 +6,11 @@ const ListingList = ({ listings }) => {
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-10">
       {listings.map((listing) => (
         <Link to={`/listing/${listing._id}`} key={listing._id}>
-          <div className="border border-gray-700 rounded-2xl shadow-md overflow-hidden transition-transform hover:scale-105 duration-300">
+          <div className="border border-gray-700 rounded-2xl shadow-md overflow-hidden transition-transform hover:scale-105 duration-300 min-h-[400px]">
             <img
               src={listing.img || 'https://via.placeholder.com/400'}
               alt={listing.title}
-              className="w-full h-64 object-cover"
+              className="w-full h-80 object-cover"
             />
             <div className="p-2 ">
               <h3 className="text-2xl font-semibold text-black mb-1">{listing.title}</h3>

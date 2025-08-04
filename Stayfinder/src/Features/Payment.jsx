@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { bookingAPI } from '../api';
 
 const Payment = ({ onClose, bookingData, listingPrice, listingId }) => {
   const [currency, setCurrency] = useState('INR');
@@ -53,14 +53,12 @@ const Payment = ({ onClose, bookingData, listingPrice, listingId }) => {
         return;
       }
       
-      const res = await axios.post(
-        `http://localhost:3000/listing/${listingId}/payment`, 
-        requestBody,
+      const res = await bookingAPI.createBookingWithPayment(
+        listingId,
+        paymentData,
         {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
+          ...bookingData,
+          user_id: localStorage.getItem('userId')
         }
       );
       

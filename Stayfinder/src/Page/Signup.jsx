@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { authAPI } from '../api';
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from './Navabar';
@@ -11,7 +11,7 @@ const SignUp = () => {
 
     const handleOnSubmit = (e) => {
         e.preventDefault();
-        axios.post("http://localhost:3000/signup", { username, password, email })
+        authAPI.signup({ username, password, email })
             .then(result => {
                 console.log(result);
                 navigate('/login');

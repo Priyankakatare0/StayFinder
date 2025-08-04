@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { listingAPI } from '../api';
 import { useNavigate } from 'react-router-dom';
 
 const EditListing = ({ listing, onUpdate, onDelete }) => {
@@ -16,7 +16,7 @@ const EditListing = ({ listing, onUpdate, onDelete }) => {
   const handleUpdate = async () => {
     setLoading(true);
     try {
-      const res = await axios.put(`http://localhost:3000/listing/${listing._id}`, {
+      const res = await listingAPI.updateListing(listing._id, {
         title,
         price,
         location,
@@ -39,7 +39,7 @@ const EditListing = ({ listing, onUpdate, onDelete }) => {
     if (!confirmDelete) return;
 
     try {
-      const res = await axios.delete(`http://localhost:3000/listing/${listing._id}?userId=${userId}`);
+      const res = await listingAPI.deleteListing(listing._id, userId);
 
       if (res.status === 200) {
         alert('Listing deleted!');

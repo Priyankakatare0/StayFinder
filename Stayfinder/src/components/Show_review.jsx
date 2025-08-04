@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import { reviewAPI } from '../api';
 
 const Show_review = () => {
   const [reviews, setReviews] = useState([]);
@@ -11,7 +11,7 @@ const Show_review = () => {
     if (!id) return;
 
     try {
-      const res = await axios.get(`http://localhost:3000/listing/${id}/reviews`);
+      const res = await reviewAPI.getReviewsByListing(id);
       setReviews(res.data);
       setError(null);
     } catch (err) {

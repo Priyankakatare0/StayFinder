@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 const cors = require('cors');
 const listingModel = require('./Models/listing');
 const UserModel = require('./Models/user');
@@ -238,7 +239,6 @@ app.post('/listing/:id/payment', jwtMiddleware, async( req, res) => {
         console.log("Payment validation error:", paymentError);
         return res.status(400).json({message: "Invalid payment data", details: paymentError.details});
     }
-
     // Validate booking data
     const listingId = req.params.id;
     const completeBookingData = { ...bookingData, listing_id: listingId };
@@ -247,13 +247,11 @@ app.post('/listing/:id/payment', jwtMiddleware, async( req, res) => {
         console.log("Booking validation error:", bookingError);
         return res.status(400).json({message: "Invalid booking data", details: bookingError.details});
     }
-
     try{
         // Only proceed if payment status is success
         if(paymentValue.status !== 'success') {
             return res.status(400).json({message: "Payment not successful"});
         }
-
         // Create payment record first
         const payment = await paymentModel.create({
             user_id : paymentValue.user_id,
@@ -263,7 +261,6 @@ app.post('/listing/:id/payment', jwtMiddleware, async( req, res) => {
             status: paymentValue.status,
             transactionId: paymentValue.transactionId,
         });
-
         // Only create booking if payment was successful
         const booking = await bookingModel.create(bookingValue);
 
@@ -276,6 +273,17 @@ app.post('/listing/:id/payment', jwtMiddleware, async( req, res) => {
         console.log("Error", err) ;
         return res.status(500).json({ message: "Something wrong!", details: err.message });
     }
+});
+
+app.get('/get-user-hash', jwtMiddleware, (req, res) => {
+    const secret = process.env.CHATBASE_SECRET; // Your verification secret key
+    const userId = req.user.id; // A string UUID to identify your user
+
+    if(!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+    }
+    const hash = crypto.createHmac('sha256', secret).update(userId).digest('hex');
+    res.json({userId, userIdHash: hash});
 });
 
 app.listen(3000, () => {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import { listingAPI } from '../api';
 import Booking from '../Page/Booking';
 import Show_review from './Show_review';
 import Review from './Review';
@@ -19,7 +19,7 @@ const ListingDetails = () => {
   useEffect(() => {
     const fetchListingData = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/listing/${id}`);
+        const response = await listingAPI.getListingById(id);
         setDetail(response.data);
       } catch {
         setError("Invalid Listing ID or Data Not Found");
