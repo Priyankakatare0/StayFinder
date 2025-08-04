@@ -35,6 +35,8 @@
   - **💬 Reviews section with user ratings and comments**
 - Login and register pages with validation
 - Responsive design using Tailwind CSS
+- **💸 Simulated payment gateway for secure booking confirmation**
+- **🤖 AI Chatbot for support and assistance**
 
 ### 🛠️ Backend API
 - User authentication: `POST /auth/register`, `POST /auth/login`
@@ -46,12 +48,18 @@
   - `DELETE /listings/:id`
 - Bookings: `POST /bookings`
 - **Reviews: `POST /reviews`, `GET /listings/:id/reviews`**
+- **Payments: `POST /listing/:id/payment`**
 
 ### 📦 Database Models
 - **User**: name, email, password (hashed), isHost
 - **Listing**: title, location, price, description, images, hostId
 - **Booking**: userId, listingId, checkIn, checkOut, guests
 - **Review**: listingId, userId, comment, rating
+  
+## 🌐 Live Demo
+
+- 🔗 Frontend: [stay-finder.vercel.app](https://stay-finder-wheat.vercel.app)  
+- 🔗 Backend: [stayfinder.onrender.com](https://stayfinder-1-84yg.onrender.com)
 
 ---
 
