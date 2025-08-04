@@ -11,7 +11,7 @@ const Header = () => {
   };
 
   return (
-<div className="bg-gradient-to-b from-gray-200 to-transparent min-h-[70vh] flex justify-center items-center p-5 rounded-xl">
+<div className="bg-gradient-to-b from-gray-200 to-transparent min-h-[80vh] flex justify-center items-center p-5 rounded-xl">
       <div
         className="relative w-full max-w-8xl rounded-xl overflow-hidden border border-gray-300"
         style={{
