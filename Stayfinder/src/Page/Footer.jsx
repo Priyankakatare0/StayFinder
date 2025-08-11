@@ -1,11 +1,12 @@
 import React from 'react';
+import './Footer.css'; // Assuming you have some styles for this component
 
 const Footer = () => {
   return (
     <footer className="bg-gray-800 border-t border-gray-600 text-white px-6 py-10">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_2fr] gap-5">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_2fr] gap-5 ">
         {/* Left Sections */}
-        <div>
+        <div className='left-section'>
           <h3 className="font-semibold mb-4">Page</h3>
           <ul className="text-gray-300 space-y-2 text-sm">
             <li>Home</li>
@@ -15,7 +16,7 @@ const Footer = () => {
           </ul>
         </div>
 
-        <div>
+        <div className='left-section'>
           <h3 className="font-semibold mb-4">Features</h3>
           <ul className="text-gray-300 space-y-2 text-sm">
             <li>Find Hotels</li>
@@ -24,7 +25,7 @@ const Footer = () => {
           </ul>
         </div>
 
-        <div>
+        <div className='left-section'> 
           <h3 className="font-semibold mb-4">Cookies</h3>
           <ul className="text-gray-300 space-y-2 text-sm">
             <li>Data Collect</li>
@@ -34,9 +35,10 @@ const Footer = () => {
           </ul>
         </div>
 
+
         {/* Subscribe Section */}
         <div className="bg-gray-700 border border-gray-500 text-white rounded-xl p-8 relative">
-          <div className="flex items-start justify-between mb-4">
+          <div className="flex items-start justify-between mb-4 ">
             <div>
               <h2 className="font-bold text-2xl leading-snug">
                 Don't Wanna<br />Miss Our Offers?

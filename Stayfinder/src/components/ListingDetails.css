@@ -1,0 +1,34 @@
+@media screen and (max-width: 768px) {
+  .image {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 200px 100px;
+    gap: 0.5rem;
+    height: 320px;
+  }
+
+  .image > div:first-child {
+    /* grid-column: 1; */
+    grid-row: 1 / 2;
+    height: 200px;
+  }
+  .image > div:nth-child(2),
+  .image > div:nth-child(3) {
+    grid-column: span 1;
+    grid-row: 2 / 3;
+    height: 100px;
+    display: inline-block;
+  }
+  .image > div:nth-child(2) {
+    margin-right: 2px;
+  }
+  .image > div:nth-child(3) {
+    margin-left: 2px;
+  }
+  .image img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+  }
+}

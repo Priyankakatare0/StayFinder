@@ -5,6 +5,7 @@ import Booking from '../Page/Booking';
 import Show_review from './Show_review';
 import Review from './Review';
 import EditListing from './EditListing';
+import './ListingDetails.css'; // Assuming you have some styles for this component
 
 const ListingDetails = () => {
   const { id } = useParams();
@@ -38,7 +39,7 @@ const ListingDetails = () => {
           <h2 className="text-3xl font-bold mb-6">{detail.title}</h2>
 
           {/* Images */}
-          <div className="grid grid-cols-3 grid-rows-2 gap-4 h-[500px] mb-8">
+          <div className="grid grid-cols-3 grid-rows-2 gap-4 h-[500px] mb-8 image ">
             <div className="col-span-2 row-span-2 rounded-xl overflow-hidden">
               <img src={detail.img} alt="Main Hotel" className="object-cover w-full h-full" />
             </div>

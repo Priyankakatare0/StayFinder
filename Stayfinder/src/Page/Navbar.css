@@ -1,0 +1,60 @@
+/* Navbar.css */
+@media screen and (max-width: 768px) {
+  .navbar {
+    position: relative;
+    padding: 0.7rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 100;
+  }
+
+  .navbar-logo {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .navbar-menu-desktop {
+    display: none;
+  }
+
+  .navbar-toggle {
+    display: block;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 2rem;
+    cursor: pointer;
+    z-index: 101;
+  }
+
+  .navbar-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100vw;
+    background: black;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem 0.5rem;
+    border-radius: 0 0 12px 12px;
+  }
+
+  .navbar-menu.open {
+    display: flex;
+  }
+
+  .navbar-link {
+    color: #e0e0e0;
+    text-decoration: none;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    width: 100%;
+  }
+
+  .navbar-link:hover {
+    color: #4fc3f7;
+  }
+}
