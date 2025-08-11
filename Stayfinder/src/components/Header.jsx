@@ -60,7 +60,7 @@ const Header = () => {
           </div>
 
           {/* Search Box */}
-          <div className="bg-white mt-20 p-8 rounded-xl shadow-md flex flex-wrap gap-8 items-end w-full max-w-5xl text-black">
+          <div className="bg-white mt-10 p-8 rounded-xl shadow-md flex flex-wrap gap-8 items-end w-full max-w-5xl text-black">
             {/* Location */}
             <div className="flex flex-col flex-1 min-w-[150px]">
               <label htmlFor="location" className="font-bold text-gray-800 mb-1">Location</label>
