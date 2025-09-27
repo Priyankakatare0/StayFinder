@@ -11,9 +11,9 @@ const Header = () => {
   };
 
   return (
-<div className="bg-gradient-to-b from-gray-200 to-transparent min-h-[70vh] flex justify-center items-center p-5 rounded-xl">
+    <div className="bg-gradient-to-b from-gray-200 to-transparent min-h-[70vh] flex justify-center items-center p-5 rounded-xl">
       <div
-  className="relative w-full max-w-8xl rounded-xl overflow-hidden border border-gray-300"
+        className="relative w-full max-w-8xl rounded-xl overflow-hidden border border-gray-300"
         style={{
           backgroundImage: `url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhkAREZs4aKlVQvSrX2XxhRcsehtvlT_P4bQ&s')`,
         }}
@@ -26,7 +26,7 @@ const Header = () => {
         />
 
         {/* Overlay */}
-  <div className="absolute inset-0 bg-black bg-opacity-60 px-6 md:px-16 py-6 text-white">
+        <div className="absolute inset-0 bg-black bg-opacity-60 px-6 md:px-16 py-6 text-white">
           {/* Navbar */}
           <Navbar />
 

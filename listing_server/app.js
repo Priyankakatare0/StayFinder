@@ -228,33 +228,33 @@ app.get('/listing/:id/reviews', async (req, res) => {
             details: err.message,
         });
     }
-}); 
+});
 
-app.post('/listing/:id/payment', jwtMiddleware, async( req, res) => {
+app.post('/listing/:id/payment', jwtMiddleware, async (req, res) => {
     const { paymentData, bookingData } = req.body;
-    
+
     // Validate payment data
-    const {value: paymentValue, error: paymentError} = paymentValidation.validate(paymentData);
-    if(paymentError) {
+    const { value: paymentValue, error: paymentError } = paymentValidation.validate(paymentData);
+    if (paymentError) {
         console.log("Payment validation error:", paymentError);
-        return res.status(400).json({message: "Invalid payment data", details: paymentError.details});
+        return res.status(400).json({ message: "Invalid payment data", details: paymentError.details });
     }
     // Validate booking data
     const listingId = req.params.id;
     const completeBookingData = { ...bookingData, listing_id: listingId };
-    const {value: bookingValue, error: bookingError} = bookingSchema.validate(completeBookingData);
-    if(bookingError) {
+    const { value: bookingValue, error: bookingError } = bookingSchema.validate(completeBookingData);
+    if (bookingError) {
         console.log("Booking validation error:", bookingError);
-        return res.status(400).json({message: "Invalid booking data", details: bookingError.details});
+        return res.status(400).json({ message: "Invalid booking data", details: bookingError.details });
     }
-    try{
+    try {
         // Only proceed if payment status is success
-        if(paymentValue.status !== 'success') {
-            return res.status(400).json({message: "Payment not successful"});
+        if (paymentValue.status !== 'success') {
+            return res.status(400).json({ message: "Payment not successful" });
         }
         // Create payment record first
         const payment = await paymentModel.create({
-            user_id : paymentValue.user_id,
+            user_id: paymentValue.user_id,
             listing_id: listingId,
             currency: paymentValue.currency,
             amount: paymentValue.amount,
@@ -269,9 +269,155 @@ app.post('/listing/:id/payment', jwtMiddleware, async( req, res) => {
             payment: payment,
             booking: booking
         });
-    } catch(err) {
-        console.log("Error", err) ;
+    } catch (err) {
+        console.log("Error", err);
         return res.status(500).json({ message: "Something wrong!", details: err.message });
+    }
+});
+
+app.get('/profile/:id', jwtMiddleware, async (req, res) => {
+    const { id } = req.params;
+    
+    console.log('Profile endpoint called with ID:', id);
+    console.log('JWT user from token:', req.user);
+
+    try {
+        if (!id) {
+            console.log('No ID provided in params');
+            return res.status(400).json({ message: "User Id not found" })
+        }
+        
+        console.log('Searching for user with ID:', id);
+        const user = await UserModel.findById(id).select('-password');
+        console.log('User found:', user ? 'Yes' : 'No');
+        
+        if (!user) {
+            console.log('User not found for ID:', id);
+            return res.status(404).json({ message: "User not found" });
+        }
+        const listing = await listingModel.find({ host: id })
+        const booking = await bookingModel.find({ user_id: id })
+        return res.status(200).json({
+            user,
+            listing,
+            booking
+        });
+
+    }
+    catch (err) {
+        return res.status(500).json({ message: "Something went wrong!", details: err.message });
+    }
+});
+
+app.put('/profile/:id', jwtMiddleware, async (req, res) => {
+    const { id } = req.params;
+    const updateData = req.body;
+    
+    console.log('Profile UPDATE endpoint called with ID:', id);
+    console.log('Update data received:', updateData);
+    console.log('JWT user from token:', req.user);
+
+    try {
+        // Verify user can only update their own profile
+        if (req.user.id !== id) {
+            console.log('Permission denied - user trying to update different profile');
+            return res.status(403).json({ message: "You can only update your own profile" });
+        }
+
+        // Remove sensitive fields that shouldn't be updated via this endpoint
+        const { password, ...safeUpdateData } = updateData;
+        
+        const updatedUser = await UserModel.findByIdAndUpdate(
+            id, 
+            safeUpdateData, 
+            { new: true, runValidators: true }
+        ).select('-password');
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        return res.status(200).json({ 
+            message: "Profile updated successfully!", 
+            user: updatedUser 
+        });
+
+    } catch (err) {
+        console.error('Profile update error:', err);
+        
+        // Handle duplicate email error
+        if (err.code === 11000 && err.keyPattern && err.keyPattern.email) {
+            return res.status(400).json({ 
+                message: "Email already exists", 
+                details: "This email address is already taken. Please use a different email." 
+            });
+        }
+        
+        // Handle validation errors
+        if (err.name === 'ValidationError') {
+            return res.status(400).json({ 
+                message: "Validation error", 
+                details: err.message 
+            });
+        }
+        
+        return res.status(500).json({ 
+            message: "Something went wrong!", 
+            details: err.message 
+        });
+    }
+});
+
+// Get current user's profile (without needing user ID in URL)
+app.get('/profile', jwtMiddleware, async (req, res) => {
+    try {
+        const userId = req.user.id; // Get from JWT token
+        
+        const user = await UserModel.findById(userId).select('-password');
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        
+        const listing = await listingModel.find({ host: userId });
+        const booking = await bookingModel.find({ user_id: userId });
+        
+        return res.status(200).json({
+            user,
+            listing,
+            booking
+        });
+
+    } catch (err) {
+        return res.status(500).json({ message: "Something went wrong!", details: err.message });
+    }
+});
+
+// Update current user's profile (without needing user ID in URL)
+app.put('/profile', jwtMiddleware, async (req, res) => {
+    try {
+        const userId = req.user.id; // Get from JWT token
+        const updateData = req.body;
+
+        // Remove sensitive fields that shouldn't be updated via this endpoint
+        const { password, ...safeUpdateData } = updateData;
+        
+        const updatedUser = await UserModel.findByIdAndUpdate(
+            userId, 
+            safeUpdateData, 
+            { new: true, runValidators: true }
+        ).select('-password');
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        return res.status(200).json({ 
+            message: "Profile updated successfully!", 
+            user: updatedUser 
+        });
+
+    } catch (err) {
+        return res.status(500).json({ message: "Something went wrong!", details: err.message });
     }
 });
 
@@ -279,12 +425,13 @@ app.get('/get-user-hash', jwtMiddleware, (req, res) => {
     const secret = process.env.CHATBASE_SECRET; // Your verification secret key
     const userId = req.user.id; // A string UUID to identify your user
 
-    if(!userId) {
+    if (!userId) {
         return res.status(400).json({ message: "User ID is required" });
     }
     const hash = crypto.createHmac('sha256', secret).update(userId).digest('hex');
-    res.json({userId, userIdHash: hash});
+    res.json({ userId, userIdHash: hash });
 });
+
 
 app.listen(3000, () => {
     console.log("Server is running on 3000");

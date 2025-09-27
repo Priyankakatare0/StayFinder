@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Base URL configuration
-const BASE_URL = 'https://stayfinder-1-84yg.onrender.com';
+const BASE_URL = 'http://localhost:3000';
 
 // Create axios instance with base configuration
 const api = axios.create({
@@ -52,6 +52,15 @@ export const bookingAPI = {
 export const reviewAPI = {
   addReview: (reviewData) => api.post('/review', reviewData),
   getReviewsByListing: (listingId) => api.get(`/listing/${listingId}/reviews`),
+};
+
+// Profile APIs
+export const profileAPI = {
+  getProfile: (userId) => api.get(`/profile/${userId}`),
+  updateProfile: (userId, profileData) => api.put(`/profile/${userId}`, profileData),
+  // New endpoints that use JWT token to identify user (no userId needed)
+  getCurrentUserProfile: () => api.get('/profile'),
+  updateCurrentUserProfile: (profileData) => api.put('/profile', profileData),
 };
 
 // Export the axios instance for custom requests

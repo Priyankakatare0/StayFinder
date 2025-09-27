@@ -5,6 +5,7 @@ import ListingList from './ListingList';
 const Listings = () => {
   const [listings, setListings] = useState([]);
   const [query, setQuery] = useState('');
+  const [visibleCount, setVisibleCount] = useState(6); // Show 6 items initially (2 rows of 3)
 
   useEffect(() => {
     const fetchListing = async () => {
@@ -19,12 +20,31 @@ const Listings = () => {
     fetchListing();
   }, []);
 
+  // Reset visible count when search query changes
+  useEffect(() => {
+    setVisibleCount(6);
+  }, [query]);
+
   // Filter listings based on query
   const filteredListings = listings.filter((listing) =>
     listing.title?.toLowerCase().includes(query.toLowerCase()) ||
     listing.location?.toLowerCase().includes(query.toLowerCase()) ||
     String(listing.price).includes(query)
   );
+
+  // Get currently visible listings
+  const visibleListings = filteredListings.slice(0, visibleCount);
+  const hasMore = visibleCount < filteredListings.length;
+
+  // Handle view more button click
+  const handleViewMore = () => {
+    setVisibleCount(prev => Math.min(prev + 6, filteredListings.length));
+  };
+
+  // Handle view less button click
+  const handleViewLess = () => {
+    setVisibleCount(6); // Reset to initial count
+  };
 
   return (
     <div className="bg-white text-black min-h-screen py-10 px-4 mt-15">
@@ -56,8 +76,34 @@ const Listings = () => {
       </div>
 
       {/* Listing Grid */}
-      <div className="max-w-7.5xl ml-4 mr-3  mx-auto">
-        <ListingList listings={filteredListings} />
+      <div className="max-w-7.5xl ml-4 mr-3 mx-auto">
+        <ListingList listings={visibleListings} />
+        
+        {/* View More/Less Buttons */}
+        <div className="flex justify-center gap-4 mt-12 mb-8">
+          {hasMore && (
+            <button
+              onClick={handleViewMore}
+              className="hover:bg-gray-100 text-black border font-semibold py-3 px-20 rounded-full transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:scale-106"
+            >
+              View More Hotels
+            </button>
+          )}
+          
+          {visibleCount > 6 && (
+            <button
+              onClick={handleViewLess}
+              className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-20 rounded-full transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+            >
+              View Less Hotels
+            </button>
+          )}
+        </div>
+
+        {/* Results Info */}
+        <div className="text-center mt-8 text-gray-600">
+       
+        </div>
       </div>
     </div>
   );

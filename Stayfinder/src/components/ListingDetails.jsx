@@ -5,7 +5,7 @@ import Booking from '../Page/Booking';
 import Show_review from './Show_review';
 import Review from './Review';
 import EditListing from './EditListing';
-import './ListingDetails.css'; // Assuming you have some styles for this component
+// import './ListingDetails.css';
 
 const ListingDetails = () => {
   const { id } = useParams();

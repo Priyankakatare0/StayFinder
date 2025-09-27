@@ -1,10 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import './Navbar.css';
 import { Link } from 'react-router-dom'
+import {CircleUser, User} from 'lucide-react'
 
 const Navbar = () => {
     const [menuOpen, setMenuOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+    // Get current user ID for profile link
+    const currentUserId = localStorage.getItem('userId');
+    const profileLink = currentUserId ? `/profile/${currentUserId}` : '/login';
+    
+    console.log('Navbar - Current User ID:', currentUserId);
+    console.log('Navbar - Profile Link:', profileLink);
 
     // Update state on window resize
     useEffect(() => {
@@ -21,6 +29,10 @@ const Navbar = () => {
                     <Link to={"/"} className="navbar-link">Hotels</Link>
                     <Link to={"/add_listing"} className="navbar-link">AddListing</Link>
                     <Link to={"/login"} className="navbar-link">Login</Link>
+                    <Link to={profileLink} className='navbar-link'>
+                      <CircleUser size={30} className='text-white'/>
+                      </Link>
+
                 </div>
                 {/* Mobile Toggle + Menu */}
                 {isMobile && (
@@ -35,6 +47,9 @@ const Navbar = () => {
                       <Link to="/" className="navbar-link">Hotels</Link>
                       <Link to="/add_listing" className="navbar-link">AddListing</Link>
                       <Link to="/login" className="navbar-link">Login</Link>
+                      <Link to={profileLink} className='navbar-link'>
+                      <User size={16} className='text-white'/>
+                      </Link>
                     </div>
                   </>
                 )}

@@ -5,20 +5,17 @@ import Header from './Header';
 import ListingList from './ListingList';
 import Listings from './Listings';
 import Footer from '../Page/Footer';
-
-
-
+import MostVisited from './MostVisited';
 
 const Home = () => {
   return (
     <>
-  
-    <Header/>
-    <Listings/>
-    <Footer />
-   
+      <Header />
+      <MostVisited/>
+      <Listings />
+      <Footer />
     </>
-    
+
   )
 };
 

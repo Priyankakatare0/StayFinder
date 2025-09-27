@@ -12,6 +12,7 @@ import AddListing from './Page/AddListing'
 import Home from './components/Home'
 import Listings from './components/Listings'
 import ListingDetails from './components/ListingDetails'
+import Profile from './Page/Profile'
 
 function App() {
 
@@ -26,6 +27,7 @@ function App() {
           <Route path='/add_listing' element={<AddListing />} />
           <Route path='/login' element={<Login />} />
           <Route path='/signup' element={<SignUp />} />
+          <Route path='/profile/:id' element={<Profile/>} />
           <Route path='/listing/:id' element={<ListingDetails />} />
 
         </Routes>
