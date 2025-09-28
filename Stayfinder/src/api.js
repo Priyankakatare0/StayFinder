@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Base URL configuration
-const BASE_URL = 'https://stayfinder.onrender.com';
+const BASE_URL = 'https://stayfinder-1-84yg.onrender.com';
 
 // Create axios instance with base configuration
 const api = axios.create({
